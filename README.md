@@ -15,7 +15,7 @@
 
 ## 👥 Team Members
 * **Fadhil Fitra Wijaya** — 122450082
-* **Nama Lengkap 2** — NIM
+* **Ali Aristo Muthahhari Parisi** — 123450088
 * **Nama Lengkap 3** — NIM
 * **Nama Lengkap 4** — NIM
 
