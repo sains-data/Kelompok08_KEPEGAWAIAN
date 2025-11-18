@@ -108,7 +108,7 @@ Domain yang diangkat adalah **pengelolaan kepegawaian**, mencakup seluruh lifecy
 
   ---
   
-  ## 📊 Key Performance Indicators (KPIs)
+## 📊 Key Performance Indicators (KPIs)
 
 ### 🎯 Strategic (HR Health & Cost)
 * **Total Headcount** (Jumlah pegawai aktif per periode)
