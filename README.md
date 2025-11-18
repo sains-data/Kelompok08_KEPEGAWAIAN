@@ -1,4 +1,4 @@
-# 📊 Data Mart Biro Akademik Umum - Institut Teknologi Sumatera
+# 📊 Data Mart Kepegawaian - Institut Teknologi Sumatera
 
 ![Logo Tugas Besar Data Warehouse Gasal 2025](https://github.com/sains-data/Data-Warehouse-2025-Gasal/blob/main/Logo-DW-Gasal-2025.gif)
 
