@@ -61,7 +61,7 @@ Domain yang diangkat adalah **pengelolaan kepegawaian**, mencakup seluruh lifecy
 ### 🧮 Fact Tables
 
 #### 1. **Fact_Employee_Snapshot**
-**Grain**: Satu baris per pegawai per bulan (monthly snapshot)
+**Grain**: Satu baris per pegawai per bulan (Monthly Snapshot)
 
 * **SnapshotKey** (PK)
 * **DateKey** (FK → Dim_Date)
@@ -72,11 +72,9 @@ Domain yang diangkat adalah **pengelolaan kepegawaian**, mencakup seluruh lifecy
 * **Measures**:
   * IsActive
   * BaseSalary
-  * PositionAllowance
   * TotalCompensation
   * TenureMonths
   * AgeYears
-  * DaysUntilRetirement
 
 #### 2. **Fact_Attendance**
 **Grain**: Satu baris per pegawai per hari
@@ -85,17 +83,13 @@ Domain yang diangkat adalah **pengelolaan kepegawaian**, mencakup seluruh lifecy
 * **DateKey** (FK → Dim_Date)
 * **EmployeeKey** (FK → Dim_Employee)
 * **UnitKey** (FK → Dim_Unit)
-* **AttendanceID** (Degenerate Dimension)
 * **Measures**:
   * CheckInTime
   * CheckOutTime
   * WorkingHours
   * LateMinutes
-  * OvertimeHours
   * IsPresent
   * IsLate
-  * AttendanceStatus
-
 
 #### 3. **Fact_Performance**
 **Grain**: Satu baris per pegawai per periode evaluasi
@@ -104,15 +98,103 @@ Domain yang diangkat adalah **pengelolaan kepegawaian**, mencakup seluruh lifecy
 * **EvaluationDateKey** (FK → Dim_Date)
 * **PeriodStartDateKey** (FK → Dim_Date)
 * **PeriodEndDateKey** (FK → Dim_Date)
-* **EmployeeKey** (FK → Dim_Employee)
-* **EvaluatorKey** (FK → Dim_Employee)
+* **EmployeeKey** (FK → Dim_Employee - *Dinilai*)
+* **EvaluatorKey** (FK → Dim_Employee - *Penilai*)
 * **Measures**:
   * SKPScore
   * BehaviorScore
   * TotalScore
   * PerformanceRating
-  * TargetAchievement
-  * IsPromotionEligible
-
 
 ---
+
+## 🧮 Fact Tables
+
+#### 1. **Fact_Employee_Snapshot**
+**Grain**: Satu baris per pegawai per bulan (Monthly Snapshot)
+
+* **SnapshotKey** (PK)
+* **DateKey** (FK → Dim_Date)
+* **EmployeeKey** (FK → Dim_Employee)
+* **PositionKey** (FK → Dim_Position)
+* **UnitKey** (FK → Dim_Unit)
+* **RankKey** (FK → Dim_Rank)
+* **Measures**:
+  * IsActive
+  * BaseSalary
+  * TotalCompensation
+  * TenureMonths
+  * AgeYears
+
+#### 2. **Fact_Attendance**
+**Grain**: Satu baris per pegawai per hari
+
+* **AttendanceKey** (PK)
+* **DateKey** (FK → Dim_Date)
+* **EmployeeKey** (FK → Dim_Employee)
+* **UnitKey** (FK → Dim_Unit)
+* **Measures**:
+  * CheckInTime
+  * CheckOutTime
+  * WorkingHours
+  * LateMinutes
+  * IsPresent
+  * IsLate
+
+#### 3. **Fact_Performance**
+**Grain**: Satu baris per pegawai per periode evaluasi
+
+* **PerformanceKey** (PK)
+* **EvaluationDateKey** (FK → Dim_Date)
+* **PeriodStartDateKey** (FK → Dim_Date)
+* **PeriodEndDateKey** (FK → Dim_Date)
+* **EmployeeKey** (FK → Dim_Employee - *Dinilai*)
+* **EvaluatorKey** (FK → Dim_Employee - *Penilai*)
+* **Measures**:
+  * SKPScore
+  * BehaviorScore
+  * TotalScore
+  * PerformanceRating
+
+  ---
+  
+  ## 📊 Key Performance Indicators (KPIs)
+
+### 🎯 Strategic (HR Health & Cost)
+* **Total Headcount** (Jumlah pegawai aktif per periode)
+* **Turnover Rate** (% Pegawai keluar vs Total pegawai)
+* **Cost Per Employee** (Rata-rata gaji & kompensasi)
+* **Average Tenure** (Rata-rata lama bekerja)
+* **Retirement Forecast** (Prediksi pensiun berdasarkan usia)
+
+### 📈 Operational (Discipline)
+* **Attendance Rate** (% Kehadiran vs Hari Kerja Efektif)
+* **Punctuality Rate** (% Check-in tepat waktu)
+* **Late Intensity** (Rata-rata menit keterlambatan per kejadian)
+
+### ⭐ Quality (Performance)
+* **Average Performance Score** (Rata-rata nilai SKP/Total Score)
+* **High Performer Ratio** (% Pegawai dengan rating 'Sangat Baik' atau A)
+* **Low Performer Ratio** (% Pegawai dengan rating 'Kurang' atau D/E)
+* **Promotion Eligibility** (% Pegawai memenuhi syarat promosi)
+
+---
+
+## 📂 Documentation  
+- **Business Requirements**  
+  `/01-business-requirements/`
+
+- **Design Documents**  
+  `/02-data-modeling/`  
+
+---
+
+## ⏳ Timeline
+- **Misi 1:** 10 November 2025  
+- **Misi 2:** 17 November 2025  
+- **Misi 3:** 24 November 2025  
+
+---
+
+# Data Mart - Kepegawaian  
+Tugas Besar Pergudangan Data - Kelompok 8
