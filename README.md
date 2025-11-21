@@ -50,7 +50,7 @@ Domain yang diangkat adalah **pengelolaan kepegawaian**, mencakup:
 ---
 
 ## 📐 Schema Design
-![Schema Diagram](image_d262be.png)
+* STarSchema
 *(Diagram skema fisik Data Mart)*
 
 ---
