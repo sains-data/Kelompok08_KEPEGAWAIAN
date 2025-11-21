@@ -28,5 +28,5 @@ Berikut adalah matriks pemetaan dari modul-modul yang ada di Website Kepegawaian
 | **5** | **Log Presensi (E-Absensi)** | Rekam jejak kehadiran harian (Fingerprint/Online). | `TrAbsensi` | `Fact_Attendance` | Harian | **Incremental Load:** Mengambil data berdasarkan `Tanggal = H-1`. |
 | **6** | **E-Kinerja (Penilaian)** | Rekapitulasi nilai SKP dan Perilaku kerja. | `TrPenilaianKinerja` | `Fact_Performance` | Semesteran | **Incremental Load:** Mengambil data saat periode penilaian ditutup. |
 | **7** | **Payroll (Remunerasi)** | Data nominal gaji pokok dan tunjangan. | `TrGaji` | `Fact_Employee_Snapshot` | Bulanan | **Incremental Load:** Mengambil data setiap tanggal 1 bulan berikutnya. |
-
+| **8** | **System Generated (SQL Script)** | Data referensi kalender (Hari, Bulan, Tahun, Semester, Hari Libur). | *- (Tidak butuh staging)* | `Dim_Date` | Sekali (One-time Load) | **Script Generation:** Dibuat menggunakan T-SQL Stored Procedure (Looping tanggal misal: 2020-2030). |
 ---
