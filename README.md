@@ -21,7 +21,7 @@
 
 ## 📘 Project Description
 
-Data Mart Kepegawaian ini dirancang untuk mendukung analitik manajemen sumber daya manusia secara komprehensif di Institut Teknologi Sumatera. Fokus utama berada pada proses **rekrutmen, pengelolaan pegawai, pengembangan karir, penilaian kinerja, serta kesejahteraan pegawai**, sehingga dapat dipakai untuk memantau produktivitas pegawai, efektivitas program pelatihan, analisis headcount, serta perencanaan suksesi.
+Data Mart Kepegawaian ini dirancang untuk mendukung analitik manajemen sumber daya manusia secara komprehensif di Institut Teknologi Sumatera. Fokus utama berada pada pemantauan **biaya pegawai, kedisiplinan harian, dan evaluasi kinerja berkala**. Sistem ini menggunakan arsitektur *Galaxy Schema* untuk mengintegrasikan berbagai proses bisnis ke dalam satu pusat data analitik.
 
 Pendekatan **dimensional modeling (Kimball)** digunakan agar proses analisis cepat, konsisten, dan mudah diekspansi.
 
@@ -29,104 +29,104 @@ Pendekatan **dimensional modeling (Kimball)** digunakan agar proses analisis cep
 
 ## 🏫 Business Domain
 
-Domain yang diangkat adalah **pengelolaan kepegawaian**, mencakup seluruh lifecycle pegawai:
+Domain yang diangkat adalah **pengelolaan kepegawaian**, mencakup:
 
-1. **Rekrutmen & Seleksi** (Recruitment)
-2. **Penempatan & Penugasan** (Assignment)
-3. **Kehadiran & Produktivitas** (Attendance)
-4. **Pelatihan & Pengembangan** (Training & Development)
-5. **Penilaian Kinerja** (Performance Appraisal)
-6. **Mutasi & Promosi** (Career Movement)
+1. **Profil & Biaya Pegawai** (HR Costing & Profiling)
+2. **Kehadiran & Kedisiplinan** (Attendance)
+3. **Penilaian Kinerja** (Performance Appraisal)
 
 ### Stakeholder Utama:
 * **Bagian Kepegawaian ITERA**
 * **Rektor & Wakil Rektor II (SDM)**
 * **Kepala Unit/Fakultas**
-* **Kepala Biro**
 
 ## 🏗️ Architecture
 
-* **Approach**: Kimball Dimensional Modeling (Star Schema)
+* **Approach**: Galaxy Schema (Fact Constellation)
 * **Platform**: SQL Server 2019 on Azure VM
-* **ETL**: SQL Server Integration Services (SSIS) / T-SQL Stored Procedures
-* **Orchestrator**: SQL Server Agent
-* **Analytical Layer**: Power BI Desktop
-* **Version Control**: GitHub
+* **ETL**: SQL Server Integration Services (SSIS)
+* **Reporting**: Power BI Desktop
 
 ---
 
+## 📐 Schema Design
+![Schema Diagram](image_d262be.png)
+*(Diagram skema fisik Data Mart)*
+
+---
 
 ## ⭐ Key Features
 
-### 🧮 Fact Tables
+### 🧮 Fact Tables (Tabel Fakta)
+Menyimpan metrik (angka) dan foreign keys untuk analisis kuantitatif.
 
 #### 1. **Fact_Employee_Snapshot**
-**Grain**: Satu baris per pegawai per bulan (Monthly Snapshot)
-
-* **SnapshotKey** (PK)
-* **DateKey** (FK → Dim_Date)
-* **EmployeeKey** (FK → Dim_Employee)
-* **PositionKey** (FK → Dim_Position)
-* **UnitKey** (FK → Dim_Unit)
-* **RankKey** (FK → Dim_Rank)
+**Fungsi**: Mencatat posisi, gaji, dan jumlah pegawai pada setiap akhir bulan.
+* **Keys**: `SnapshotKey` (PK), `DateKey`, `EmployeeKey`, `PositionKey`, `UnitKey`, `RankKey`.
 * **Measures**:
-  * IsActive
-  * BaseSalary
-  * TotalCompensation
-  * TenureMonths
-  * AgeYears
+  * `GajiPokok` (IDR) — *Analisis beban biaya SDM.*
+  * `JumlahOrang` (Int) — *Flag penghitung headcount (selalu bernilai 1).*
 
 #### 2. **Fact_Attendance**
-**Grain**: Satu baris per pegawai per hari
-
-* **AttendanceKey** (PK)
-* **DateKey** (FK → Dim_Date)
-* **EmployeeKey** (FK → Dim_Employee)
-* **UnitKey** (FK → Dim_Unit)
+**Fungsi**: Mencatat transaksi kehadiran harian pegawai.
+* **Keys**: `AttendanceKey` (PK), `DateKey`, `EmployeeKey`, `UnitKey`.
 * **Measures**:
-  * CheckInTime
-  * CheckOutTime
-  * WorkingHours
-  * LateMinutes
-  * IsPresent
-  * IsLate
+  * `DurasiKerja` (Jam/Decimal) — *Produktivitas waktu kerja.*
+  * `MenitTerlambat` (Int) — *Indikator kedisiplinan.*
+  * `StatusKehadiran` (Degenerate) — *Hadir/Sakit/Izin/Alpha.*
 
 #### 3. **Fact_Performance**
-**Grain**: Satu baris per pegawai per periode evaluasi
-
-* **PerformanceKey** (PK)
-* **EvaluationDateKey** (FK → Dim_Date)
-* **PeriodStartDateKey** (FK → Dim_Date)
-* **PeriodEndDateKey** (FK → Dim_Date)
-* **EmployeeKey** (FK → Dim_Employee - *Dinilai*)
-* **EvaluatorKey** (FK → Dim_Employee - *Penilai*)
+**Fungsi**: Mencatat hasil evaluasi kinerja pegawai per periode.
+* **Keys**: `PerformanceKey` (PK), `DateKey` (Tgl Evaluasi), `EmployeeKey`, `UnitKey`, `PositionKey`.
 * **Measures**:
-  * SKPScore
-  * BehaviorScore
-  * TotalScore
-  * PerformanceRating
+  * `Skor_Akhir` (Decimal) — *Nilai hasil evaluasi.*
+  * `Grade` (Varchar) — *Predikat kinerja (A/B/C).*
 
-  ---
+---
+
+### 🗂️ Dimension Tables (Tabel Dimensi)
+Menyimpan konteks deskriptif untuk filtering dan grouping data.
+
+#### 1. **Dim_Date**
+*Dimensi waktu untuk analisis trend (Time Series).*
+* **Attributes**: `DateKey` (PK), `FullDate`, `Year`, `Month`, `Quarter`, `Semester`.
+
+#### 2. **Dim_Employee**
+*Menyimpan profil detail individu pegawai.*
+* **Attributes**: `EmployeeKey` (PK), `NIP`, `NamaPegawai`, `BirthDate`, `JenisKelamin`, `StatusPegawai`.
+
+#### 3. **Dim_Unit**
+*Menyimpan hierarki organisasi (Program Studi, Biro, Fakultas).*
+* **Attributes**: `UnitKey` (PK), `KodeUnit`, `NamaUnit`, `Fakultas`, `Location`.
+
+#### 4. **Dim_Position**
+*Menyimpan jenis jabatan struktural maupun fungsional.*
+* **Attributes**: `PositionKey` (PK), `KodePosition`, `NamaPosition`, `PositionType`, `DescPekerjaan`.
+
+#### 5. **Dim_Rank**
+*Menyimpan data kepangkatan dan golongan pegawai negeri/tetap.*
+* **Attributes**: `RankKey` (PK), `KodeRank`, `NamaRank`, `Golongan`, `Rank`.
+
+---
   
 ## 📊 Key Performance Indicators (KPIs)
 
-### 🎯 Strategic (HR Health & Cost)
-* **Total Headcount** (Jumlah pegawai aktif per periode)
-* **Turnover Rate** (% Pegawai keluar vs Total pegawai)
-* **Cost Per Employee** (Rata-rata gaji & kompensasi)
-* **Average Tenure** (Rata-rata lama bekerja)
-* **Retirement Forecast** (Prediksi pensiun berdasarkan usia)
+Data Mart ini mampu menjawab pertanyaan bisnis berikut:
 
-### 📈 Operational (Discipline)
-* **Attendance Rate** (% Kehadiran vs Hari Kerja Efektif)
-* **Punctuality Rate** (% Check-in tepat waktu)
-* **Late Intensity** (Rata-rata menit keterlambatan per kejadian)
+### 🎯 HR Cost & Profiling
+* **Total Headcount**: `SUM(Fact_EmployeeSnapshot.JumlahOrang)`
+* **Total Salary Cost**: `SUM(Fact_EmployeeSnapshot.GajiPokok)`
+* **Salary per Unit**: Analisis sebaran gaji berdasarkan `Dim_Unit`.
 
-### ⭐ Quality (Performance)
-* **Average Performance Score** (Rata-rata nilai SKP/Total Score)
-* **High Performer Ratio** (% Pegawai dengan rating 'Sangat Baik' atau A)
-* **Low Performer Ratio** (% Pegawai dengan rating 'Kurang' atau D/E)
-* **Promotion Eligibility** (% Pegawai memenuhi syarat promosi)
+### 📈 Discipline (Attendance)
+* **Late Intensity**: `AVG(Fact_Attendance.MenitTerlambat)`
+* **Total Jam Kerja**: `SUM(Fact_Attendance.DurasiKerja)`
+* **Absenteeism Pattern**: Jumlah ketidakhadiran berdasarkan `StatusKehadiran`.
+
+### ⭐ Performance Quality
+* **Average Performance**: `AVG(Fact_Performance.Skor_Akhir)`
+* **High Performer Ratio**: Persentase pegawai dengan `Grade = 'A'`.
+* **Performance by Position**: Rata-rata skor berdasarkan `Dim_Position`.
 
 ---
 
