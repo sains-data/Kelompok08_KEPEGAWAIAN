@@ -44,13 +44,15 @@ Domain yang diangkat adalah **pengelolaan kepegawaian**, mencakup:
 
 * **Approach**: Galaxy Schema (Fact Constellation)
 * **Platform**: SQL Server 2019 on Azure VM
-* **ETL**: SQL Server Integration Services (SSIS)
+* **ETL Strategy**: **ETL (Extract, Transform, Load) using T-SQL Scripts**
+    * *Engine:* Stored Procedure (`ETL_Master_Load`) executed via SQL Server Management Studio (SSMS).
+    * *Flow:* Raw Data → Staging Tables → Dimension & Fact Tables.
 * **Reporting**: Power BI Desktop
 
 ---
 
 ## 📐 Schema Design
-* STarSchema
+* Schema Kepegawaian
 *(Diagram skema fisik Data Mart)*
 
 ---
