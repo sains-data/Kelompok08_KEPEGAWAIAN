@@ -17,7 +17,7 @@
 * **Fadhil Fitra Wijaya** — 122450082
 * **Ali Aristo Muthahhari Parisi** — 123450088
 * **Nobel Nizam Fathirizki** — 123450117
-* **Nama Lengkap 4** — NIM
+* **Benget Sidabutar** — 123450047
 
 ## 📘 Project Description
 
